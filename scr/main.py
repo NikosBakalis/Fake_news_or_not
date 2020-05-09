@@ -22,7 +22,7 @@ text = file.text
 label = file.label
 
 vector_text = text.to_numpy()
-print(vector_text)
+print(vector_text, "\n\n")
 vectors_of_words = []
 for strings in range(len(vector_text)):
     # print(vector_text[strings])
@@ -36,7 +36,7 @@ for strings in range(len(vector_text)):
 vectors_of_strings = []
 
 print("\n")
-print(vector_text)
+print(vector_text, "\n\n")
 
 x = tf_idf.fit(vector_text)
 print(x.vocabulary_)
@@ -53,8 +53,8 @@ print("\n\n\n")
 # print(len(label))
 df.insert(len(df.columns), "labelz", label, True)
 # pandas.set_option('display.max_rows', None)
-print(df)
-print(df.size)
+print(df, "\n\n")
+print("Size of dataframe: \t\t", df.size, "\n\n")
 
 X_train, X_test, y_train, y_test = train_test_split(df.loc[:, df.columns != 'labelz'], df.labelz, test_size=0.25)
 # X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.20)
