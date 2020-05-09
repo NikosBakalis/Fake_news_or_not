@@ -8,12 +8,14 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 import time
 import tensorflow
+from keras.callbacks import EarlyStopping
 
 start_time = time.time()
 
 ps = PorterStemmer()
 tf_idf = TfidfVectorizer()
 stop_words = set(stopwords.words('english'))
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1)
 
 file = pandas.read_csv("../Input/onion-or-not.csv")
 text = file.text
@@ -55,6 +57,7 @@ print(df)
 print(df.size)
 
 X_train, X_test, y_train, y_test = train_test_split(df.loc[:, df.columns != 'labelz'], df.labelz, test_size=0.25)
+# X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.20)
 
 print(X_train)
 
@@ -68,7 +71,7 @@ model.add(tensorflow.keras.layers.Dense(128, activation=tensorflow.nn.relu))
 model.add(tensorflow.keras.layers.Dense(128, activation=tensorflow.nn.relu))
 model.add(tensorflow.keras.layers.Dense(2, activation=tensorflow.nn.softmax))
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-model.fit(X_train.to_numpy(), y_train.to_numpy(), epochs=3)
+model.fit(X_train.to_numpy(), y_train.to_numpy(), epochs=10, batch_size=16, verbose=1, validation_data=(X_test.to_numpy(), y_test.to_numpy()), callbacks=[es])
 
 val_loss, val_acc = model.evaluate(X_test, y_test)
 print("\n\nLoss: \t\t", val_loss, "\nAccuracy: \t", val_acc, "\n\n")
